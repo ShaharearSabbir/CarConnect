@@ -57,7 +57,8 @@ const loginUser = async (payload: Record<string, unknown>) => {
       name: userFromDB.name,
       role: userFromDB.role,
     },
-    config.JWT_SECRET
+    config.JWT_SECRET,
+    { expiresIn: "7d" }
   );
 
   delete userFromDB.password;
