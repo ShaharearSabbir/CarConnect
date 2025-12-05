@@ -17,6 +17,23 @@ const createUser = async (req: Request, res: Response) => {
   }
 };
 
+const loginUser = async (req: Request, res: Response) => {
+  const body = req.body;
+
+  try {
+    const result = await authServices.loginUser(body);
+
+    if (!result.success) {
+      sendResponse(res, 500, result);
+    }
+
+    sendResponse(res, 201, result);
+  } catch (error: any) {
+    sendResponse(res, 500, { success: false, message: error.message });
+  }
+};
+
 export const authController = {
   createUser,
+  loginUser,
 };
