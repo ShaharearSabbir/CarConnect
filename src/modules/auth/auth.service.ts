@@ -21,6 +21,7 @@ const createUser = async (payload: Record<string, unknown>) => {
 
 const loginUser = async (payload: Record<string, unknown>) => {
   const { email, password } = payload;
+
   const result = await pool.query(
     `
     SELECT * FROM users WHERE email=$1

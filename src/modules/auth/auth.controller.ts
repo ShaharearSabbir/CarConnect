@@ -4,6 +4,12 @@ import { authServices } from "./auth.service";
 
 const createUser = async (req: Request, res: Response) => {
   const body = req.body;
+  const { password } = body;
+
+  if ((password as string).length < 6) {
+    sendResponse(res, 500, { success: false, message: "password is too weak" });
+  }
+
   try {
     const result = await authServices.createUser(body);
 
