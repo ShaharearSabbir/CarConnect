@@ -3,7 +3,7 @@ import path from "path";
 
 dotenv.config({ path: path.join(process.cwd(), ".env") });
 
-const envVariables = ["APP_NAME", "VERSION", "PORT"] as const;
+const envVariables = ["APP_NAME", "VERSION", "PORT", "CONNECTION_STR"] as const;
 
 type Config = Record<(typeof envVariables)[number], string>;
 
