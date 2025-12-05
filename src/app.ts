@@ -3,6 +3,7 @@ import config from "./config";
 import sendResponse from "./helper/sendResponse";
 import initDB from "./config/db";
 import { authRouter } from "./modules/auth/auth.routes";
+import { vehicleRouter } from "./modules/vehicle/vehicle.routes";
 
 const app = express();
 
@@ -18,7 +19,11 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
+// Auth
 app.use("/api/v1/auth", authRouter);
+
+// Vehicle
+app.use("/api/v1/vehicles", vehicleRouter);
 
 app.use((req: Request, res: Response) => {
   sendResponse(res, 404, {
