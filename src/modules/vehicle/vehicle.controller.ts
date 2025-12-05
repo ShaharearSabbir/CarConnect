@@ -18,6 +18,21 @@ const addVehicle = async (req: Request, res: Response) => {
   }
 };
 
+const getVehicle = async (req: Request, res: Response) => {
+  try {
+    const result = await vehicleService.getVehicle();
+
+    sendResponse(res, 200, {
+      success: true,
+      message: "Vehicles retrieved successfully",
+      data: result.rows,
+    });
+  } catch (error: any) {
+    sendResponse(res, 500, { success: false, message: error });
+  }
+};
+
 export const vehicleController = {
   addVehicle,
+  getVehicle,
 };
