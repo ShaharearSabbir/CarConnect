@@ -44,8 +44,60 @@ const getSingleVehicle = async (id: string) => {
   return result;
 };
 
+const updateVehicle = async (id: string, payload: Record<string, unknown>) => {
+  const updates: string[] = [];
+  const params: unknown[] = [];
+  let paramIndex = 1;
+
+  const validKeys = [
+    "vehicle_name",
+    "type",
+    "registration_number",
+    "daily_rent_price",
+    "availability_status",
+  ];
+
+  for (const key of validKeys) {
+    if (payload[key] !== undefined) {
+      updates.push(`${key}=$${paramIndex}`);
+
+      params.push(payload[key]);
+
+      paramIndex++;
+    }
+  }
+
+  if (updates.length === 0) {
+    return { success: false, message: "no field provided for update" };
+  }
+
+  const setForUpdate = updates.join(", ");
+
+  params.push(id);
+
+  console.log(setForUpdate, paramIndex, params);
+
+  const result = await pool.query(
+    `
+    UPDATE vehicles SET ${setForUpdate} WHERE id=$${paramIndex} RETURNING *
+    `,
+    params
+  );
+
+  if (result.rows.length === 0) {
+    return { success: false, message: `no vehicle with id: ${id}` };
+  }
+
+  return {
+    success: true,
+    message: `vehicle with id: ${id} is updated`,
+    data: result.rows[0],
+  };
+};
+
 export const vehicleService = {
   addVehicle,
   getVehicle,
   getSingleVehicle,
+  updateVehicle,
 };
