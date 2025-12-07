@@ -71,11 +71,11 @@ const updateVehicle = async (id: string, payload: Record<string, unknown>) => {
     return { success: false, message: "no field provided for update" };
   }
 
+  updates.push(`updated_at=NOW()`);
+
   const setForUpdate = updates.join(", ");
 
   params.push(id);
-
-  console.log(setForUpdate, paramIndex, params);
 
   const result = await pool.query(
     `
@@ -90,9 +90,24 @@ const updateVehicle = async (id: string, payload: Record<string, unknown>) => {
 
   return {
     success: true,
-    message: `vehicle with id: ${id} is updated`,
+    message: "Vehicle updated successfully",
     data: result.rows[0],
   };
+};
+
+const deleteVehicle = async (id: string) => {
+  const result = await pool.query(
+    `
+    DELETE vehicles WHERE id=$1
+    `,
+    [id]
+  );
+
+  if (result.rowCount === 1) {
+    return { success: true, message: "Vehicle deleted successfully" };
+  }
+
+  return { success: false, message: `no vehicle with id: ${id}` };
 };
 
 export const vehicleService = {
@@ -100,4 +115,5 @@ export const vehicleService = {
   getVehicle,
   getSingleVehicle,
   updateVehicle,
+  deleteVehicle,
 };
