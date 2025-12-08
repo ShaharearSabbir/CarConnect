@@ -1,3 +1,4 @@
+import { JwtPayload } from "jsonwebtoken";
 import { pool } from "../../config/db";
 
 const createBooking = async (payload: Record<string, unknown>) => {
@@ -106,6 +107,63 @@ const createBooking = async (payload: Record<string, unknown>) => {
   }
 };
 
+const getBooking = async (user: JwtPayload) => {
+  const { role, id } = user;
+
+  if (role == "admin") {
+    const result = await pool.query(`
+        SELECT json_agg(
+        json_build_object(
+            'id', b.id,
+            'customer_id', b.customer_id,
+            'vehicle_id', b.vehicle_id,
+            'rent_start_date', b.rent_start_date,
+            'rent_end_date', b.rent_end_date,
+            'total_price', b.total_price,
+            'status', b.status,
+            'customer', json_build_object(
+                'name', u.name,
+                'email', u.email
+            ),
+            'vehicle', json_build_object(
+                'vehicle_name', v.vehicle_name,
+                'registration_number', v.registration_number
+            )
+        )
+        ) as data FROM bookings b JOIN users u ON b.customer_id = u.id JOIN vehicles v ON b.vehicle_id = v.id
+        `);
+
+    return result.rows[0].data;
+  }
+
+  if (role == "customer") {
+    const result = await pool.query(
+      `
+        SELECT json_agg(
+        json_build_object(
+            'id', b.id,
+            'customer_id', b.customer_id,
+            'vehicle_id', b.vehicle_id,
+            'rent_start_date', b.rent_start_date,
+            'rent_end_date', b.rent_end_date,
+            'total_price', b.total_price,
+            'status', b.status,
+            'vehicle', json_build_object(
+                'vehicle_name', v.vehicle_name,
+                'registration_number', v.registration_number,
+                'type', v.type
+            )
+        )
+        ) as data FROM bookings b JOIN users u ON b.customer_id = u.id JOIN vehicles v ON b.vehicle_id = v.id WHERE b.customer_id=$1
+        `,
+      [id]
+    );
+
+    return result.rows[0].data;
+  }
+};
+
 export const bookingService = {
   createBooking,
+  getBooking,
 };
