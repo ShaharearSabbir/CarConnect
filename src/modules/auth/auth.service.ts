@@ -52,11 +52,7 @@ const loginUser = async (payload: Record<string, unknown>) => {
   );
 
   const token = jwt.sign(
-    {
-      email,
-      name: userFromDB.name,
-      role: userFromDB.role,
-    },
+    { id: userFromDB.id, email, name: userFromDB.name, role: userFromDB.role },
     config.JWT_SECRET,
     { expiresIn: "7d" }
   );

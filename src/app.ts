@@ -4,6 +4,7 @@ import sendResponse from "./helper/sendResponse";
 import initDB from "./config/db";
 import { authRouter } from "./modules/auth/auth.routes";
 import { vehicleRouter } from "./modules/vehicle/vehicle.routes";
+import { userRoutes } from "./modules/user/user.routes";
 
 const app = express();
 
@@ -24,6 +25,9 @@ app.use("/api/v1/auth", authRouter);
 
 // Vehicle
 app.use("/api/v1/vehicles", vehicleRouter);
+
+// User
+app.use("/api/v1/users", userRoutes);
 
 app.use((req: Request, res: Response) => {
   sendResponse(res, 404, {
