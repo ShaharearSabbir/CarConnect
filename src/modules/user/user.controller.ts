@@ -39,7 +39,24 @@ const updateUser = async (req: Request, res: Response) => {
   }
 };
 
+const deleteUSer = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+
+  //TODO check active bookings
+
+  try {
+    const result = userService.deleteUSer(userId as string);
+    sendResponse(res, 201, {
+      success: true,
+      message: "User deleted successfully",
+    });
+  } catch (error: any) {
+    sendResponse(res, 500, { success: true, message: error.message });
+  }
+};
+
 export const userController = {
   getUsers,
   updateUser,
+  deleteUSer,
 };

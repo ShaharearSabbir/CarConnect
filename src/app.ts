@@ -5,6 +5,7 @@ import initDB from "./config/db";
 import { authRouter } from "./modules/auth/auth.routes";
 import { vehicleRouter } from "./modules/vehicle/vehicle.routes";
 import { userRoutes } from "./modules/user/user.routes";
+import { bookingRoutes } from "./modules/booking/booking.routes";
 
 const app = express();
 
@@ -28,6 +29,9 @@ app.use("/api/v1/vehicles", vehicleRouter);
 
 // User
 app.use("/api/v1/users", userRoutes);
+
+// Booking
+app.use("/api/v1/bookings", bookingRoutes);
 
 app.use((req: Request, res: Response) => {
   sendResponse(res, 404, {
