@@ -96,6 +96,17 @@ const updateVehicle = async (id: string, payload: Record<string, unknown>) => {
 };
 
 const deleteVehicle = async (id: string) => {
+  const isActiveBooking = await pool.query(
+    `
+    SELECT status FROM bookings WHERE vehicle_id = $1 AND status = $2 
+    `,
+    [id, "active"]
+  );
+
+  if (isActiveBooking.rows.length !== 0) {
+    return { success: false, message: "this vehicle has active booking" };
+  }
+
   const result = await pool.query(
     `
     DELETE vehicles WHERE id=$1

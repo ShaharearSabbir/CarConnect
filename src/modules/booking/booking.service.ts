@@ -4,6 +4,13 @@ import { pool } from "../../config/db";
 const createBooking = async (payload: Record<string, unknown>) => {
   const { customer_id, vehicle_id, rent_start_date, rent_end_date } = payload;
 
+  if (!customer_id || !vehicle_id) {
+    return {
+      success: false,
+      message: "must provide customer id and vehicle id",
+    };
+  }
+
   const MSPerDay = 1000 * 60 * 60 * 24;
 
   const startDateInMS = new Date(rent_start_date as string).getTime();

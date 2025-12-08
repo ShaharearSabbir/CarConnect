@@ -52,6 +52,17 @@ const updateUser = async (id: string, payload: Record<string, unknown>) => {
 };
 
 const deleteUSer = async (id: string) => {
+  const isActiveBooking = await pool.query(
+    `
+    SELECT status FROM bookings WHERE customer_id = $1 AND status = $2 
+    `,
+    [id, "active"]
+  );
+
+  if (isActiveBooking.rowCount !== 0) {
+    return { success: false, message: "this user has active booking" };
+  }
+
   const result = await pool.query(
     `
         DELETE FROM users WHERE id=$1
@@ -59,7 +70,7 @@ const deleteUSer = async (id: string) => {
     [id]
   );
 
-  return result;
+  return { success: true, message: "User deleted successfully" };
 };
 
 export const userService = {

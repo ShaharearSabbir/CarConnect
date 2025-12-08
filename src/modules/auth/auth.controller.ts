@@ -33,7 +33,7 @@ const loginUser = async (req: Request, res: Response) => {
       sendResponse(res, 500, result);
     }
 
-    sendResponse(res, 201, result);
+    sendResponse(res, 200, result);
   } catch (error: any) {
     sendResponse(res, 500, { success: false, message: error.message });
   }

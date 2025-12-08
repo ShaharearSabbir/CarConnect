@@ -42,14 +42,11 @@ const updateUser = async (req: Request, res: Response) => {
 const deleteUSer = async (req: Request, res: Response) => {
   const { userId } = req.params;
 
-  //TODO check active bookings
-
   try {
-    const result = userService.deleteUSer(userId as string);
-    sendResponse(res, 201, {
-      success: true,
-      message: "User deleted successfully",
-    });
+    const result = await userService.deleteUSer(userId as string);
+
+    const statusCode = result.success ? 201 : 406;
+    sendResponse(res, statusCode, result);
   } catch (error: any) {
     sendResponse(res, 500, { success: true, message: error.message });
   }
