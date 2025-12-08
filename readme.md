@@ -153,7 +153,7 @@ Ensure you have **Node.js** (LTS version) and **npm/yarn** installed.
 ### 2. Clone the Repository
 
 ```bash
-git clone [https://github.com/ShaharearSabbir/CarConnect](https://github.com/ShaharearSabbir/CarConnect)
+git clone https://github.com/ShaharearSabbir/CarConnect
 cd CarConnect
 ```
 
@@ -176,4 +176,4 @@ Create a file named .env in the root directory and configure it with the followi
 | `CONNECTION_STR` | Your PostgreSQL database connection string. |
 | `JWT_SECRET` | A long, secure secret key for JWT signing. |
 
-The API will be accessible locally at http://localhost:<PORT>/api/v1.
+The API will be accessible locally at http://localhost:5000/api/v1.
