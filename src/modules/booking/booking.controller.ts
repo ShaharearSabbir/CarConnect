@@ -25,7 +25,26 @@ const getBooking = async (req: Request, res: Response) => {
   }
 };
 
+const updateBooking = async (req: Request, res: Response) => {
+  const { bookingId } = req.params;
+  const role = req.user?.role;
+  const { status } = req.body;
+
+  try {
+    const result = await bookingService.updateBooking(
+      bookingId as string,
+      role,
+      status
+    );
+
+    sendResponse(res, 201, result as Record<string, unknown>);
+  } catch (error: any) {
+    sendResponse(res, 500, { success: false, message: error.message });
+  }
+};
+
 export const bookingController = {
   createBooking,
   getBooking,
+  updateBooking,
 };

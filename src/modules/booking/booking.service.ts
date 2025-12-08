@@ -163,7 +163,75 @@ const getBooking = async (user: JwtPayload) => {
   }
 };
 
+const updateBooking = async (id: string, role: string, status: string) => {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    if (status === "returned" && role === "admin") {
+      const bookingUpdate = await client.query(
+        `
+            UPDATE bookings SET status = $1 WHERE id = $2 RETURNING *
+            `,
+        [status, id]
+      );
+
+      const booking = bookingUpdate.rows[0];
+
+      const vehicleUpdate = await client.query(
+        `
+        UPDATE vehicles SET availability_status = $1 WHERE id = $2 RETURNING availability_status
+        `,
+        ["available", booking.vehicle_id]
+      );
+
+      const availability_status = vehicleUpdate.rows[0].availability_status;
+
+      booking.vehicle = { availability_status };
+
+      await client.query("COMMIT");
+
+      return {
+        success: true,
+        message: "Booking marked as returned. Vehicle is now available",
+        data: booking,
+      };
+    }
+
+    if (status === "cancelled") {
+      const bookingUpdate = await client.query(
+        `
+            UPDATE bookings SET status = $1 WHERE id = $2 RETURNING *
+            `,
+        [status, id]
+      );
+
+      const booking = bookingUpdate.rows[0];
+
+      const vehicleUpdate = await client.query(
+        `
+        UPDATE vehicles SET availability_status = $1 WHERE id = $2
+        `,
+        ["available", booking.vehicle_id]
+      );
+
+      await client.query("COMMIT");
+
+      return {
+        success: true,
+        message: "Booking cancelled successfully",
+        data: booking,
+      };
+    }
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  }
+};
+
 export const bookingService = {
   createBooking,
   getBooking,
+  updateBooking,
 };
